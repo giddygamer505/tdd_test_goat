@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+db.sqlite3
+functional_tests.py
+.DS_Store
+/superlists/__pycache__
+/lists/__pycache__
