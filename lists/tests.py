@@ -24,7 +24,7 @@ class HomePageTest(TestCase):
         self.assertEqual(Item.objects.count(), 0)
 
     def test_displays_all_list_items(self):
-        Item.objects.create(text='itemey 1',priority='Low')
+        Item.objects.create(text='itemey 1',priority='Low') 
         Item.objects.create(text='itemey 2',priority='High')
 
         response = self.client.get('/')
