@@ -64,12 +64,12 @@ class NewVisitorTest(LiveServerTestCase):
         #She see item priority box and add priority
         input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
         self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
-        input_pritority.send_keys("Medium")
+        input_pritority.send_keys("Low")
 
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list table
         input_pritority.submit()
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Low)")
 
         # There is still a text box inviting her to add another item.
         # She enters "Use peacock feathers to make a fly"
@@ -81,8 +81,8 @@ class NewVisitorTest(LiveServerTestCase):
         input_pritority.submit()
 
         # The page updates again, and now shows both items on her list
-        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
+        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly (Priority: Low)")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Low)")
 
         # Edith wonders whether the site will remember her list. Then she sees
         # that the site has generated a unique URL for her -- there is some
