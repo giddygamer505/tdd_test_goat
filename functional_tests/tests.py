@@ -66,9 +66,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
         input_pritority.send_keys("Low")
 
+        #Then she see add button
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list table
-        input_pritority.submit()
+        submit_button.click()
         self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Low)")
 
         # There is still a text box inviting her to add another item.
@@ -76,9 +79,10 @@ class NewVisitorTest(LiveServerTestCase):
         # (Edith is very methodical)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
         inputbox.send_keys("Use peacock feathers to make a fly")
         input_pritority.send_keys("Low")
-        input_pritority.submit()
+        submit_button.click()
 
         # The page updates again, and now shows both items on her list
         self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly (Priority: Low)")
