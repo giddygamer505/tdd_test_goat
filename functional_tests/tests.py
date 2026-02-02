@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 from selenium.common.exceptions import WebDriverException
-import time
 import unittest
 
 MAX_WAIT = 5  
@@ -48,13 +47,11 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
-        
-        # แก้ไข 3: ใช้ By.TAG_NAME
         header_text = self.browser.find_element(By.TAG_NAME, 'h1').text
         self.assertIn('To-Do', header_text)
 
         # She is invited to enter a to-do item straight away
-        # แก้ไข 4: ใช้ By.ID
+
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         self.assertEqual(inputbox.get_attribute('placeholder'),'Enter a to-do item')
 
@@ -64,15 +61,15 @@ class NewVisitorTest(LiveServerTestCase):
         #She see item priority box and add priority
         input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
         self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
-        input_pritority.send_keys("Low")
+        input_pritority.send_keys("Medium")
 
         #Then she see add button
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         
         # When she hits enter, the page updates, and now the page lists
-        # "1: Buy peacock feathers" as an item in a to-do list table
+        # "1: Buy peacock feathers (Priority: Medium)" as an item in a to-do list table
         submit_button.click()
-        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Low)")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
 
         # There is still a text box inviting her to add another item.
         # She enters "Use peacock feathers to make a fly"
@@ -81,14 +78,69 @@ class NewVisitorTest(LiveServerTestCase):
         input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         inputbox.send_keys("Use peacock feathers to make a fly")
+        #She enters priority box "Low" then click "add"
         input_pritority.send_keys("Low")
         submit_button.click()
 
         # The page updates again, and now shows both items on her list
         self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly (Priority: Low)")
-        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Low)")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
 
         # Edith wonders whether the site will remember her list. Then she sees
         # that the site has generated a unique URL for her -- there is some
         # explanatory text to that effect.
         self.fail('Finish the test!')
+
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # Edith starts a new to-do list
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+        inputbox.send_keys("Buy peacock feathers")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
+        input_pritority.send_keys("Medium")
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        submit_button.click()
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
+
+        # She notices that her list has a unique URL
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, "/lists/.+") 
+
+        # Now a new user, Francis, comes along to the site.
+
+        ## We delete all the browser's cookies
+        ## as a way of simulating a brand new user session  
+        self.browser.delete_all_cookies()
+
+        # Francis visits the home page.  There is no sign of Edith's
+        # list
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element(By.TAG_NAME, "body").text
+        self.assertNotIn("Buy peacock feathers", page_text)
+
+        # Francis starts a new list by entering a new item. He
+        # is less interesting than Edith...
+        inputbox = self.browser.find_element(By.ID, "id_new_item")
+
+        inputbox.send_keys("Buy milk")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        input_pritority.send_keys("Medium")
+
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        submit_button.click()
+        
+        self.wait_for_row_in_list_table("1: Buy milk (Priority: Medium)")
+
+        # Francis gets his own unique URL
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, "/lists/.+")
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        # Again, there is no trace of Edith's list
+        page_text = self.browser.find_element(By.TAG_NAME, "body").text
+        self.assertNotIn("Buy peacock feathers", page_text)
+        self.assertIn("Buy milk", page_text)
+
+        # Satisfied, they both go back to sleep
+        
