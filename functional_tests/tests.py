@@ -58,33 +58,25 @@ class NewVisitorTest(LiveServerTestCase):
         # She types "Buy peacock feathers" into a text box
         inputbox.send_keys("Buy peacock feathers")
 
-        #She see item priority box and add priority
-        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
-        self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
-        input_pritority.send_keys("Medium")
-
         #Then she see add button
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers (Priority: Medium)" as an item in a to-do list table
         submit_button.click()
-        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # There is still a text box inviting her to add another item.
         # She enters "Use peacock feathers to make a fly"
         # (Edith is very methodical)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
-        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         inputbox.send_keys("Use peacock feathers to make a fly")
-        #She enters priority box "Low" then click "add"
-        input_pritority.send_keys("Low")
         submit_button.click()
 
         # The page updates again, and now shows both items on her list
-        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly (Priority: Low)")
-        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
+        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # Edith wonders whether the site will remember her list. Then she sees
         # that the site has generated a unique URL for her -- there is some
@@ -96,12 +88,9 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         inputbox.send_keys("Buy peacock feathers")
-        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
-        self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
-        input_pritority.send_keys("Medium")
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         submit_button.click()
-        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -124,13 +113,11 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element(By.ID, "id_new_item")
 
         inputbox.send_keys("Buy milk")
-        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
-        input_pritority.send_keys("Medium")
 
         submit_button = self.browser.find_element(By.ID, 'id_submit')
         submit_button.click()
         
-        self.wait_for_row_in_list_table("1: Buy milk (Priority: Medium)")
+        self.wait_for_row_in_list_table("1: Buy milk")
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
