@@ -5,3 +5,4 @@ functional_tests.py
 .DS_Store
 /superlists/__pycache__
 /lists/__pycache__/static
+src/db.sqlite3
