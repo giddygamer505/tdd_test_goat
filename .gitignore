@@ -6,3 +6,5 @@ functional_tests.py
 /superlists/__pycache__
 /lists/__pycache__/static
 src/db.sqlite3
+src/db.sqlite3
+src/db.sqlite3

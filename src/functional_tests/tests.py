@@ -7,7 +7,7 @@ import time
 from selenium.common.exceptions import WebDriverException
 import os
 
-MAX_WAIT = 5  
+MAX_WAIT = 10
 
 # ส่วนตั้งค่า Firefox (จำเป็นสำหรับเครื่อง Linux ที่ลงผ่าน Snap)
 options = Options()
