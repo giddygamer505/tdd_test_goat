@@ -9,4 +9,5 @@ COPY src /src
 
 WORKDIR /src
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8888"]
+# หาบรรทัดสุดท้ายที่เขียนว่า CMD ... แล้วแก้เป็น:
+CMD sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8888"
