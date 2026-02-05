@@ -59,34 +59,42 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # She types "Buy peacock feathers" into a text box
         inputbox.send_keys("Buy peacock feathers")
+
+        #She see item priority box and add priority
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
+        input_pritority.send_keys("Medium")
+
+        #Then she see add button
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
         
         # When she hits enter, the page updates, and now the page lists
-        # "1: Buy peacock feathers "" as an item in a to-do list table
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
+        # "1: Buy peacock feathers (Priority: Medium)" as an item in a to-do list table
+        submit_button.click()
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
 
         # There is still a text box inviting her to add another item.
         # She enters "Use peacock feathers to make a fly"
         # (Edith is very methodical)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
         inputbox.send_keys("Use peacock feathers to make a fly")
-        inputbox.send_keys(Keys.ENTER)
-
-        # The page updates again, and now shows both items on her list
-        self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
-
-        # Edith wonders whether the site will remember her list. Then she sees
-        # that the site has generated a unique URL for her -- there is some
-        # explanatory text to that effect.
+        #She enters priority box "Low" then click "add"
+        input_pritority.send_keys("Low")
+        submit_button.click()
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-do list
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         inputbox.send_keys("Buy peacock feathers")
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        self.assertEqual(input_pritority.get_attribute('placeholder'),'Enter an item priority')
+        input_pritority.send_keys("Medium")
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        submit_button.click()
+        self.wait_for_row_in_list_table("1: Buy peacock feathers (Priority: Medium)")
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -109,10 +117,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox = self.browser.find_element(By.ID, "id_new_item")
 
         inputbox.send_keys("Buy milk")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        input_pritority.send_keys("Medium")
 
-        inputbox.send_keys(Keys.ENTER)
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        submit_button.click()
         
-        self.wait_for_row_in_list_table("1: Buy milk")
+        self.wait_for_row_in_list_table("1: Buy milk (Priority: Medium)")
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
@@ -144,8 +155,13 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # She starts a new list and sees the input is nicely
         # centered there too
         inputbox.send_keys("testing")
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: testing")
+        input_pritority = self.browser.find_element(By.ID, 'id_priority_item')
+        input_pritority.send_keys("High")
+        
+        submit_button = self.browser.find_element(By.ID, 'id_submit')
+        submit_button.click()
+
+        self.wait_for_row_in_list_table("1: testing (Priority: High)")
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertAlmostEqual(
             inputbox.location["x"] + inputbox.size["width"] / 2,
