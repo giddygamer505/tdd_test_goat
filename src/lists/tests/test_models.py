@@ -96,12 +96,13 @@ class NewItemTest(TestCase):
 
         self.client.post(
             f"/lists/{correct_list.id}/add_item",
-            data={"item_text": "A new item for an existing list"},
+            data={"item_text": "A new item for an existing list",'priority_text':'Medium'},
         )
 
         self.assertEqual(Item.objects.count(), 1)
         new_item = Item.objects.get()
         self.assertEqual(new_item.text, "A new item for an existing list")
+        self.assertEqual(new_item.priority,"Medium")
         self.assertEqual(new_item.list, correct_list)
 
     def test_redirects_to_list_view(self):
@@ -110,7 +111,7 @@ class NewItemTest(TestCase):
 
         response = self.client.post(
             f"/lists/{correct_list.id}/add_item",
-            data={"item_text": "A new item for an existing list"},
+            data={"item_text": "A new item for an existing list",'priority_text':'Medium'},
         )
 
         self.assertRedirects(response, f"/lists/{correct_list.id}/")
